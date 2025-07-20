@@ -1,0 +1,19 @@
+plugin_configs:
+  - id: auth
+    plugins:
+      proxy-rewrite:
+        regex_uri:
+          - "^/auth/(.*)"
+          - "/$1"
+
+routes:
+  - uri: /auth/*
+    plugin_config_id: auth
+    upstream_id: auth
+
+upstreams:
+  - id: auth
+    nodes:
+      "kratos:4433": 1
+    type: roundrobin
+#END

@@ -1,0 +1,84 @@
+services:
+  mongodb:
+    image: mongo:8.0.12-rc0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - intranet
+
+  postgres:
+    image: postgres:14.18-bookworm
+    environment:
+      POSTGRES_PASSWORD: secret
+      PGDATA: secret
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - intranet
+
+  kratos:
+    image: oryd/kratos:v1.3.1
+    environment:
+      DSN: memory
+    command: serve -c /etc/config/kratos/kratos.yaml --dev --watch-courier
+    volumes:
+      - ./.config/kratos:/etc/config/kratos
+    depends_on:
+      - postgres
+    networks:
+      - intranet
+
+  oathkeeper:
+    image: oryd/oathkeeper:v0.40.9
+    command: serve
+    depends_on:
+      - kratos
+    networks:
+      - intranet
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    volumes:
+      - mailpit_data:/data
+    ports:
+      - 8025:8025
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+      - intranet
+      - extranet
+
+  apisix:
+    image: apache/apisix:3.13.0-debian
+    ports:
+      - "9180:9180/tcp"
+      - "9080:9080/tcp"
+      - "9091:9091/tcp"
+      - "9443:9443/tcp"
+      - "9092:9092/tcp"
+    environment:
+      ADMIN_KEY: secret
+    volumes:
+      - ./.config/apisix/config.yaml:/usr/local/apisix/conf/config.yaml
+      - ./.config/apisix/apisix.yaml:/usr/local/apisix/conf/apisix.yaml
+    depends_on:
+      - oathkeeper
+    networks:
+      - intranet
+      - extranet
+
+volumes:
+  mongo_data:
+  mailpit_data:
+  postgres_data:
+  etcd_data:
+
+networks:
+  intranet:
+  extranet:

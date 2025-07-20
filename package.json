@@ -1,0 +1,19 @@
+{
+  "name": "@federate-commerce/federate",
+  "version": "0.0.1",
+  "description": "",
+  "private": "true",
+  "homepage": "https://github.com/federate-commerce/federate#readme",
+  "bugs": {
+    "url": "https://github.com/federate-commerce/federate/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/federate-commerce/federate.git"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@nx-go/nx-go": "^3.3.1",
+    "nx": "20.8.2"
+  }
+}

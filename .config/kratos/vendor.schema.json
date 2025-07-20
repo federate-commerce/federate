@@ -1,0 +1,57 @@
+{
+  "$id": "https://federate.commerce/schemas/vendor.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vendor",
+  "type": "object",
+  "properties": {
+    "traits": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "ory.sh/kratos": {
+            "credentials": {
+              "password": {
+                "identifier": true
+              }
+            },
+            "verification": {
+              "via": "email"
+            },
+            "recovery": {
+              "via": "email"
+            }
+          }
+        },
+        "phone": {
+          "type": "string",
+          "format": "tel",
+          "ory.sh/kratos": {
+            "credentials": {
+              "password": {
+                "identifier": true
+              },
+              "passkey": {
+                "display_name": true
+              }
+            }
+          }
+        },
+        "company_name": {
+          "type": "string",
+          "description": "Company Name"
+        },
+        "taxvat": {
+          "type": "string",
+          "title": "Tax ID",
+          "description": "The tax identification number (VAT)",
+          "pattern": "^[0-9a-zA-Z]+$"
+        }
+      },
+      "required": ["email", "phone", "taxvat", "company_name"],
+      "additionalProperties": false
+    }
+  }
+}
